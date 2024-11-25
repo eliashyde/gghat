@@ -54,7 +54,7 @@ ggplot(my_data, aes(x = treatment, y = mean, group = condition)) +
             position = position_dodgedifftext(width = 0.75, nudge = 0.75)) +
   coord_cartesian(ylim = c(40, 60)) +
   theme_minimal() +
-  xlab("Treatment ") +
+  xlab("Treatment") +
   ylab("Mean")
 ```
 
