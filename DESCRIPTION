@@ -12,3 +12,7 @@ Imports:
     ggplot2
 URL: https://github.com/eliashyde/gghat
 BugReports: https://github.com/eliashyde/gghat/issues
+Suggests: 
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr
