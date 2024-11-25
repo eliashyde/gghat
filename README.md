@@ -51,7 +51,7 @@ my_data <- tibble(
 ggplot(my_data, aes(x = treatment, y = mean, group = condition)) +
   geom_hat(backwards = FALSE, width = 0.75) +
   geom_text(aes(label = mean),
-            position = position_dodgedifftext(width = 0.75, nudge = 0.65)) +
+            position = position_dodgedifftext(width = 0.75, nudge = 0.6)) +
   coord_cartesian(ylim = c(40, 60)) +
   theme_minimal() +
   xlab("") +
