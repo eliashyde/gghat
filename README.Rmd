@@ -28,13 +28,15 @@ You can install the development version of gghat from GitHub:
 
 ``` r
 # install.packages("devtools")
-# library devtools
+# library(devtools)
 devtools::install_github("eliashyde/gghat")
 ```
 
 ## Example
 
-Below is an example of gghat's functionality in the context of the tidyverse:
+Below is an example of gghat's functionality in the context of the tidyverse.
+For a more detailed exploration of the package, look to the relevant vignette.
+This just gives a glimpse of a few of its features: 
 
 ```{r example, dpi = 300}
 library(tidyverse)

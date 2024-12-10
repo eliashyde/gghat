@@ -24,7 +24,8 @@ devtools::install_github("eliashyde/gghat")
 ## Example
 
 Below is an example of gghat’s functionality in the context of the
-tidyverse:
+tidyverse. For a more detailed exploration of the package, look to the
+relevant vignette. This just gives a glimpse of a few of its features:
 
 ``` r
 library(tidyverse)

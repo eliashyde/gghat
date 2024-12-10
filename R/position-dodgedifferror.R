@@ -1,5 +1,4 @@
 
-
 #' Dodged Difference for an Error Bar
 #'
 #' @param width Relative width of bars and the like.

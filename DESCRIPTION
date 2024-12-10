@@ -13,6 +13,9 @@ Imports:
 URL: https://github.com/eliashyde/gghat
 BugReports: https://github.com/eliashyde/gghat/issues
 Suggests: 
+    dplyr,
     knitr,
-    rmarkdown
+    rmarkdown,
+    tidyr,
+    tidyverse
 VignetteBuilder: knitr
