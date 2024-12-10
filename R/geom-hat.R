@@ -10,13 +10,21 @@
 #' parameter described below.
 #'
 #' @param backwards Whether or not to create backwards hats when the difference is negative.
+#' @param mapping As inherited.
+#' @param data As inherited.
+#' @param stat As inherited.
+#' @param position As inherited.
+#' @param just As inherited.
+#' @param width As inherited.
+#' @param na.rm As inherited.
+#' @param show.legend As inherited.
+#' @param inherit.aes As inherited.
 #'
 #' @export
 geom_hat <- function(mapping = NULL, data = NULL,
                      stat = "identity",
                      backwards = FALSE,
                      position = position_dodgediff(backwards = backwards),
-                     ...,
                      just = 0.5,
                      width = NULL,
                      na.rm = FALSE,
@@ -34,8 +42,7 @@ geom_hat <- function(mapping = NULL, data = NULL,
     params = list(
       just = just,
       width = width,
-      na.rm = na.rm,
-      ...
+      na.rm = na.rm
     )
   )
 }

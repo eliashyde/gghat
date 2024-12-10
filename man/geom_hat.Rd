@@ -10,7 +10,6 @@ geom_hat(
   stat = "identity",
   backwards = FALSE,
   position = position_dodgediff(backwards = backwards),
-  ...,
   just = 0.5,
   width = NULL,
   na.rm = FALSE,
@@ -19,7 +18,25 @@ geom_hat(
 )
 }
 \arguments{
+\item{mapping}{As inherited.}
+
+\item{data}{As inherited.}
+
+\item{stat}{As inherited.}
+
 \item{backwards}{Whether or not to create backwards hats when the difference is negative.}
+
+\item{position}{As inherited.}
+
+\item{just}{As inherited.}
+
+\item{width}{As inherited.}
+
+\item{na.rm}{As inherited.}
+
+\item{show.legend}{As inherited.}
+
+\item{inherit.aes}{As inherited.}
 }
 \description{
 The hat geom functions much like a bar or col geom with stat = "identity" and

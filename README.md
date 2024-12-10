@@ -17,7 +17,7 @@ You can install the development version of gghat from GitHub:
 
 ``` r
 # install.packages("devtools")
-# library devtools
+# library(devtools)
 devtools::install_github("eliashyde/gghat")
 ```
 
