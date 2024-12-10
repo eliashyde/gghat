@@ -10,6 +10,7 @@ geom_hat(
   stat = "identity",
   backwards = FALSE,
   position = position_dodgediff(backwards = backwards),
+  ...,
   just = 0.5,
   width = NULL,
   na.rm = FALSE,
@@ -27,6 +28,8 @@ geom_hat(
 \item{backwards}{Whether or not to create backwards hats when the difference is negative.}
 
 \item{position}{As inherited.}
+
+\item{...}{As inherited.}
 
 \item{just}{As inherited.}
 

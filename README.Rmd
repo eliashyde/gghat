@@ -38,24 +38,31 @@ Below is an example of gghat's functionality in the context of the tidyverse.
 For a more detailed exploration of the package, please look to the relevant vignette.
 This just gives a glimpse of a few of its features: 
 
-```{r example, dpi = 300}
+```{r example, dpi = 300, fig.width = 10, fig.height = 6}
 library(tidyverse)
 library(gghat)
 
 my_data <- tibble(
   treatment = c("A", "B", "C", "D"),
-  pre_treatment_means = c(50, 53, 48, 50),
-  post_treatment_means = c(51, 49, 55, 52)
+  pre_treatment_means = c(50, 54, 48, 50),
+  post_treatment_means = c(52, 49, 57, 53)
 ) |> 
   pivot_longer(!treatment, names_to = "condition", values_to = "mean") |> 
   mutate(condition = fct_relevel(condition, "pre_treatment_means", "post_treatment_means"))
 
 ggplot(my_data, aes(x = treatment, y = mean, group = condition)) +
-  geom_hat(backwards = FALSE, width = 0.75) +
-  geom_text(aes(label = mean),
+  geom_hat(backwards = FALSE, width = 0.75, alpha = 0.5) +
+  geom_text(aes(label = mean), family = "Courier",
             position = position_dodgedifftext(width = 0.75, nudge = 0.6)) +
-  coord_cartesian(ylim = c(40, 60)) +
+  coord_cartesian(ylim = c(44, 60)) +
   theme_minimal() +
+  theme(
+    text = element_text(family = "Courier"),
+    legend.position = "none",
+    panel.grid.major.x = element_blank(),
+    panel.grid.major.y = element_line(linewidth = 0.1, color = "black"),
+    panel.grid.minor.y = element_blank(),
+  ) +
   xlab("") +
   ylab("")
 ```

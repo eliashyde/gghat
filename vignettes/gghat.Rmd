@@ -10,13 +10,238 @@ vignette: >
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>"
+  comment = "#>",
+  out.width = "100%"
 )
 ```
 
 ```{r setup}
 library(tidyverse)
 library(gghat)
+library(patchwork)
+library(randomizr)
+library(estimatr)
 ```
 
-TO BE WRITTEN
+```{r}
+my_data <- tibble(
+  treatment = c("A", "B", "C", "D"),
+  pre_treatment_mean = c(50, 49, 48, 50),
+  post_treatment_mean = c(51, 53, 55, 52)
+) |>
+  pivot_longer(!treatment, names_to = "condition", values_to = "mean") |>
+  mutate(condition = fct_relevel(condition, "pre_treatment_mean", "post_treatment_mean"))
+
+my_data
+```
+
+```{r, dpi = 300, fig.width = 10, fig.height = 6, echo = FALSE}
+plot1 <- ggplot(my_data, aes(x = treatment, y = mean, group = condition)) +
+  geom_bar(aes(fill = condition), stat = "identity", position = "dodge", width = 0.75) +
+  scale_y_continuous(expand = c(0, 0)) +
+  scale_fill_manual(values = c("grey50", "grey70")) +
+  coord_cartesian(ylim = c(0, 60)) +
+  theme_minimal() +
+  theme(
+    text = element_text(family = "Courier"),
+    legend.position = "none",
+    panel.grid = element_blank(),
+    axis.line = element_line(linewidth = 0.5),
+    axis.ticks = element_line(linewidth = 0.5),
+  ) +
+  xlab("") +
+  ylab("")
+
+plot2 <- ggplot(my_data, aes(x = treatment, y = mean, group = condition)) +
+  geom_bar(aes(fill = condition), stat = "identity", position = "dodge", width = 0.75) +
+  scale_y_continuous(expand = c(0, 0)) +
+  scale_fill_manual(values = c("grey50", "grey70")) +
+  coord_cartesian(ylim = c(40, 60)) +
+  theme_minimal() +
+  theme(
+    text = element_text(family = "Courier"),
+    legend.position = "none",
+    panel.grid = element_blank(),
+    axis.line = element_line(linewidth = 0.5),
+    axis.ticks = element_line(linewidth = 0.5),
+  ) +
+  xlab("") +
+  ylab("")
+
+plot3 <- ggplot(my_data, aes(x = treatment, y = mean, group = condition)) +
+  geom_bar(aes(fill = condition), stat = "identity", position = "dodge", width = 0.75, alpha = 0.5) +
+  geom_hat(width = 0.75, fill = NA, color = "black", backwards = FALSE) +
+  scale_y_continuous(expand = c(0, 0)) +
+  scale_fill_manual(values = c("grey50", "grey70")) +
+  coord_cartesian(ylim = c(40, 60)) +
+  theme_minimal() +
+  theme(
+    text = element_text(family = "Courier"),
+    legend.position = "none",
+    panel.grid = element_blank(),
+    axis.line = element_line(linewidth = 0.5),
+    axis.ticks = element_line(linewidth = 0.5),
+  ) +
+  xlab("") +
+  ylab("")
+
+plot4 <- ggplot(my_data, aes(x = treatment, y = mean, group = condition)) +
+  geom_hat(width = 0.75, fill = "black", color = "black") +
+  scale_y_continuous(expand = c(0, 0)) +
+  coord_cartesian(ylim = c(40, 60)) +
+  theme_minimal() +
+  theme(
+    text = element_text(family = "Courier"),
+    legend.position = "none",
+    panel.grid = element_blank(),
+    axis.line = element_line(linewidth = 0.5),
+    axis.ticks = element_line(linewidth = 0.5),
+  ) +
+  xlab("") +
+  ylab("")
+
+(plot1 + plot2) / (plot3 + plot4)
+```
+
+```{r, dpi = 300, fig.width = 10, fig.height = 6}
+ggplot(my_data, aes(x = treatment, y = mean, group = condition)) +
+  geom_hat(width = 0.75, fill = "black", color = "black", alpha = 0.25) +
+  geom_text(aes(label = mean), family = "Courier",
+            position = position_dodgedifftext(width = 0.75, nudge = 0.6)) +
+  scale_y_continuous(expand = c(0, 0)) +
+  coord_cartesian(ylim = c(40, 60)) +
+  theme_minimal() +
+  theme(
+    text = element_text(family = "Courier"),
+    legend.position = "none",
+    panel.grid = element_blank(),
+    axis.line = element_line(linewidth = 0.5),
+    axis.ticks = element_line(linewidth = 0.5),
+  ) +
+  xlab("") +
+  ylab("")
+```
+
+```{r, dpi = 300, fig.width = 10, fig.height = 4}
+my_data <- tibble(
+  treatment = c("A", "B", "C", "D"),
+  pre_treatment_mean = c(50, 53, 48, 50),
+  post_treatment_mean = c(51, 49, 55, 52)
+) |>
+  pivot_longer(!treatment, names_to = "condition", values_to = "mean") |>
+  mutate(condition = fct_relevel(condition, "pre_treatment_mean",
+                                 "post_treatment_mean"),
+         hue = if_else(treatment == "B", "YES", "NO")) 
+
+forwards <- ggplot(my_data, aes(x = treatment, y = mean, group = condition)) +
+  geom_hat(aes(fill = hue, color = hue), width = 0.75, backwards = FALSE) +
+  geom_text(aes(label = mean), family = "Courier",
+            position = position_dodgedifftext(width = 0.75, nudge = 0.6)) +
+  scale_y_continuous(expand = c(0, 0)) +
+  scale_color_manual(values = c("grey80", "black")) +
+  scale_fill_manual(values = c("grey80", "black")) +
+  coord_cartesian(ylim = c(40, 60)) +
+  theme_minimal() +
+  theme(
+    text = element_text(family = "Courier"),
+    legend.position = "none",
+    panel.grid = element_blank(),
+    axis.line = element_line(linewidth = 0.5),
+    axis.ticks = element_line(linewidth = 0.5),
+    plot.title = element_text(hjust = 0.5)
+  ) +
+  xlab("") +
+  ylab("") +
+  ggtitle("Backwards = FALSE")
+
+backwards <- ggplot(my_data, aes(x = treatment, y = mean, group = condition)) +
+  geom_hat(aes(fill = hue, color = hue), width = 0.75, backwards = TRUE) +
+  geom_text(aes(label = mean), family = "Courier",
+            position = position_dodgedifftext(width = 0.75, nudge = 0.6, backwards = TRUE)) +
+  scale_y_continuous(expand = c(0, 0)) +
+  scale_color_manual(values = c("grey80", "black")) +
+  scale_fill_manual(values = c("grey80", "black")) +
+  coord_cartesian(ylim = c(40, 60)) +
+  theme_minimal() +
+  theme(
+    text = element_text(family = "Courier"),
+    legend.position = "none",
+    panel.grid = element_blank(),
+    axis.line = element_line(linewidth = 0.5),
+    axis.ticks = element_line(linewidth = 0.5),
+    plot.title = element_text(hjust = 0.5)
+  ) +
+  xlab("") +
+  ylab("") +
+  ggtitle("Backwards = TRUE")
+
+forwards + backwards
+```
+
+```{r, dpi = 300, fig.width = 10, fig.height = 6}
+my_data <- tibble(
+  treatment = c("A", "B", "C", "D"),
+  pre_treatment_mean = c(50, 53, 51, 50),
+  post_treatment_mean_round1 = c(51, 50, 49, 52),
+  post_treatment_mean_round2 = c(49, 48, 52, 53)
+) |>
+  pivot_longer(!treatment, names_to = "condition", values_to = "mean") |>
+  mutate(condition = fct_relevel(condition, "pre_treatment_mean", "post_treatment_mean_round1", "post_treatment_mean_round2"))
+
+ggplot(my_data, aes(x = treatment, y = mean, group = condition)) +
+  geom_hat(width = 0.75, fill = "black", color = "black", alpha = 0.25) +
+  geom_text(aes(label = mean), family = "Courier",
+            position = position_dodgedifftext(width = 0.75, nudge = 0.6)) +
+  scale_y_continuous(expand = c(0, 0)) +
+  coord_cartesian(ylim = c(40, 60)) +
+  theme_minimal() +
+  theme(
+    text = element_text(family = "Courier"),
+    legend.position = "none",
+    panel.grid = element_blank(),
+    axis.line = element_line(linewidth = 0.5),
+    axis.ticks = element_line(linewidth = 0.5),
+  ) +
+  xlab("") +
+  ylab("")
+```
+
+```{r, dpi = 300, fig.width = 10, fig.height = 6}
+dat <- tibble(
+  block = rep(c("A", "B", "C", "D"), each = 100),
+  Z = block_ra(blocks = block),
+  Y = rnorm(n = 400, mean = 50 + (block == "B")*25 + (block == "C")*5 + (block == "D")*15 + Z*15 - Z*(block == "B")*30, sd = 10)
+)
+
+group_means <- dat |> 
+  group_by(block, Z) |> 
+  reframe(tidy(lm_robust(Y ~ 1)))
+
+cates <- dat |> 
+  group_by(block) |> 
+  reframe(tidy(lm_robust(Y ~ Z))) 
+
+trunc_cates <- cates |> 
+  select(block, term, std.error) |> 
+  filter(term == "Z")
+
+group_means <- group_means |> 
+  left_join(trunc_cates, by = "block", suffix = c(".mean", ".ate"))
+  
+ggplot(group_means, aes(x = block, y = estimate, group = Z)) +
+  geom_hat(width = 0.75, fill = "black", color = "black", alpha = 0.25) +
+  geom_errorbar(aes(ymin = estimate - (1.96*std.error.ate), ymax = estimate + (1.96*std.error.ate)), width = 0.1,
+                position = position_dodgedifferror(width = 0.75)) +
+  scale_y_continuous(expand = c(0, 0)) +
+  coord_cartesian(ylim = c(35, 100)) +
+  theme_minimal() +
+  theme(
+    text = element_text(family = "Courier"),
+    legend.position = "none",
+    panel.grid = element_blank(),
+    axis.line = element_line(linewidth = 0.5),
+    axis.ticks = element_line(linewidth = 0.5),
+  ) +
+  xlab("") +
+  ylab("")
+```
