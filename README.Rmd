@@ -18,7 +18,7 @@ knitr::opts_chunk$set(
 <!-- badges: start -->
 <!-- badges: end -->
 
-The goal of gghat is to add functionality to ggplot2, such that hat plots are included
+The goal of gghat is to add functionality to ggplot, such that hat graphs are included
 in its repertoire. To this end, gghat includes geom_hat() as well as compatible positions 
 to be used with geom_text() and geom_errorbar(). 
 
@@ -36,7 +36,7 @@ devtools::install_github("eliashyde/gghat")
 
 Below is an example of gghat's functionality in the context of the tidyverse.
 For a more detailed exploration of the package, please look to the relevant vignette.
-This just gives a glimpse of a few of its features: 
+This code just gives a glimpse of a few of pertinent features: 
 
 ```{r example, dpi = 300, fig.width = 10, fig.height = 6}
 library(tidyverse)

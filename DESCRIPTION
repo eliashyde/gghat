@@ -1,5 +1,5 @@
 Package: gghat
-Title: Adding hat plots to ggplot's repertoire
+Title: Adding hat graphs to ggplot's repertoire
 Version: 0.0.0.9000
 Authors@R: 
     person("Elias", "Hyde", , "eliasworrallhyde@gmail.com", role = c("aut", "cre"))
