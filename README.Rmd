@@ -19,8 +19,8 @@ knitr::opts_chunk$set(
 <!-- badges: end -->
 
 The goal of gghat is to add functionality to ggplot, such that hat graphs are included
-in its repertoire. To this end, gghat includes geom_hat() as well as compatible positions 
-to be used with geom_text() and geom_errorbar(). 
+in its repertoire. To this end, gghat contains the hat geom as well as compatible position 
+functions to be used with the text and errorbar geoms. 
 
 ## Installation
 
@@ -29,7 +29,7 @@ You can install the development version of gghat from GitHub:
 ``` r
 # install.packages("devtools")
 # library(devtools)
-devtools::install_github("eliashyde/gghat")
+# devtools::install_github("eliashyde/gghat")
 ```
 
 ## Example
@@ -62,7 +62,9 @@ ggplot(my_data, aes(x = treatment, y = mean, group = condition)) +
     panel.grid.major.x = element_blank(),
     panel.grid.major.y = element_line(linewidth = 0.1, color = "black"),
     panel.grid.minor.y = element_blank(),
+    plot.title = element_text(hjust = 0.5)
   ) +
-  xlab("") +
-  ylab("")
+  xlab("Treatment") +
+  ylab("Measurement") +
+  ggtitle("Measurements PRE- and POST-treatment")
 ```
