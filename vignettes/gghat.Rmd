@@ -21,7 +21,7 @@ of these graphs using ggplot. Obviously, gghat requires that ggplot is also inst
 But I would recommend that the user installs the entire tidyverse, as it contains a 
 host of useful packages. The gghat package itself can be found on GitHub: https://github.com/eliashyde/gghat.
 
-```{r setup}
+```{r setup, message=FALSE}
 library(gghat)
 library(patchwork)
 library(randomizr)
