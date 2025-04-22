@@ -19,7 +19,7 @@ In this vignette, I will explain hat graphs—what they are and from whence they
 I will then work through the contents of the gghat package, which allows for the creation 
 of these graphs using ggplot. Obviously, gghat requires that ggplot is also installed. 
 But I would recommend that the user installs the entire tidyverse, as it contains a 
-host of useful packages. The gghat package itself can be found on GitHub: https://github.com/eliashyde/gghat.
+host of useful packages. The gghat package itself can be found on [GitHub](https://github.com/eliashyde/gghat).
 
 ```{r setup, message=FALSE}
 library(gghat)
@@ -33,7 +33,7 @@ Comparative bar graphs—in which bars are paired or otherwise grouped—are use
 
 How, then, might we mitigate the negative effects of an abbreviated y-axis? We could plot only the differences between groups, allowing us to start our y-axis at zero while also limiting it to a reasonable range. In doing so, though, we would lose contextualizing information—namely, the raw values. Or instead of bars, we could plot points, which visually retain only relative position and thus do not suffer from non-zero baselines. But Witt argues that points do not cater to the principles of grouping, failing to “facilitate the perceptual grouping of pairs” (Witt, 2019b). Of course, we could connect the grouped points with lines, but this isn’t ideal either because lines imply continuous variables; they are less suited for discrete data (Zacks & Tversky, 1999).
 
-Witt explains that comparative bar graphs need not fall by the wayside, at least not entirely; they need only be redesigned. Rather than equivocate, negotiating the aforementioned trade-offs, she presents the hat graph, a new visualization of bar-graph descent that allows for  “proper interpretation of discrete categories” and the use of  “unrestricted settings for the y-axis” (Witt, 2019b). From a pair of bars in a bar graph, a hat graph would retain both heights as horizontal lines; it would also retain a bit of the body of the second bar to represent the difference between the two heights, resulting in a hat shape. The steps are illustrated below. The “brim” of each hat marks one value (e.g., either pre-treatment or control) and the “crown” marks another (e.g., either post-treatment or experimental), while the profile reflects the difference therebetween (Witt, 2019b). As Tufte would recommend, this gets rid of redundancy. Moreover, as a graphic for difference, the profile has a lie factor of one, while the brim and crown are retained as annotations so as not to lose sight of the actual data values Hat graphs are efficient, requiring very little work on behalf of the viewer—although they are still novel, so it is to be expected that they occasion brief pause.
+Witt explains that comparative bar graphs need not fall by the wayside, at least not entirely; they need only be redesigned. Rather than equivocate, negotiating the aforementioned trade-offs, she presents the hat graph, a new visualization of bar-graph descent that allows for  “proper interpretation of discrete categories” and the use of  “unrestricted settings for the y-axis” (Witt, 2019b). From a pair of bars in a bar graph, a hat graph would retain both heights as horizontal lines; it would also retain a bit of the body of the second bar to represent the difference between the two heights, resulting in a hat shape. The steps are illustrated below. The “brim” of each hat marks one value (e.g., either pre-treatment or without treatment) and the “crown” marks another (e.g., either post-treatment or with treatment), while the profile reflects the difference therebetween (Witt, 2019b). As Tufte would recommend, this gets rid of redundancy. Moreover, as a graphic for difference, the profile has a lie factor of one, while the brim and crown are retained as annotations so as not to lose sight of the actual data values Hat graphs are efficient, requiring very little work on behalf of the viewer—although they are still novel, so it is to be expected that they occasion brief pause.
 
 ```{r introduction, dpi = 300, fig.width = 10, fig.height = 6, echo = FALSE}
 my_data <- tibble( 
@@ -238,7 +238,7 @@ ggplot(my_data, aes(x = treatment, y = mean, group = condition)) +
   ggtitle("Measurements after MULTIPLE rounds of treatment")
 ```
 
-The gghat package works well with the estimatr package, which makes it easy to get group means and to calculate confidence intervals. Of course, the user will have to decide whether they want to derive these confidence intervals from the standard errors of the means or the average treatment effects—that is, the differences between the means. With hat graphs, the latter is preferable. In either case the user can plot confidence intervals with the errorbar geom, but importantly, if the confidence intervals are meant to contain the average treatment effects, the error bars should not be applied to the brim of the hat. This is the point of the aforementioned dodgedifferror position function, which will only put error bars on non-baseline groups. Like dodgedifftext, dodgedifferror works even when backwards is set to TRUE, but the default setting of FALSE is recommended. This process is demonstrated below.
+The gghat package works well with the estimatr package, which makes it easy to get group means and to calculate confidence intervals. Of course, the user will have to decide whether they want to derive these confidence intervals from the standard errors of the means or the average treatment effects—that is, the differences between the means. With hat graphs, the latter is likely preferable. In either case, the user can plot confidence intervals with the errorbar geom, but importantly, if the confidence intervals are meant to contain the average treatment effects, the error bars should not be applied to the brim of the hat. This is the point of the aforementioned dodgedifferror position function, which will only put error bars on non-baseline groups. Like dodgedifftext, dodgedifferror works even when backwards is set to TRUE, but the default setting of FALSE is recommended. This process is demonstrated below.
 
 ```{r confidenceintervals, dpi = 300, fig.width = 10, fig.height = 6}
 dat <- tibble( # Generate un-summarized data
@@ -254,14 +254,12 @@ group_means <- dat |> # Then summarize the data
 
 cates <- dat |> # Get stats on the average treatment effect
   group_by(block) |> 
-  reframe(tidy(lm_robust(Y ~ Z))) 
-
-trunc_cates <- cates |> # Isolate just the standard error...
+  reframe(tidy(lm_robust(Y ~ Z))) |> # Isolate just the standard error...
   select(block, term, std.error) |> 
   filter(term == "Z") # ...of the average treatment effect...
 
 group_means <- group_means |> 
-  left_join(trunc_cates, by = "block", suffix = c(".mean", ".ate")) # ...and add it to summaries
+  left_join(cates, by = "block", suffix = c(".mean", ".ate")) # ...and add it to summaries
   
 ggplot(group_means, aes(x = block, y = estimate, group = Z)) +
   geom_hat(width = 0.75, fill = "black", color = "black", alpha = 0.25) +
@@ -281,11 +279,8 @@ ggplot(group_means, aes(x = block, y = estimate, group = Z)) +
   ) +
   xlab("Treatment") +
   ylab("Measurement") +
-  ggtitle("Measurements PRE- and POST-treatment")
+  ggtitle("Measurements WITHOUT versus WITH treatment")
 ```
-
-I will leave it to the user to explore the rest of gghat’s potential. I hope that the contents are helpful and that creative uses are found for the hat graph. Know that I am dedicated to the upkeep of the package. In the future, I will look to combine the variations of dodgediff into a single plastic position function, and I will develop this position function to make
-it easy to label groups within the hat geoms. I will also continue to encourage and facilitate the use of gghat alongside the estimatr package. And of course, I will fix any glitches that may arise.
 
 ## References
 
