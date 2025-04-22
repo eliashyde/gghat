@@ -15,6 +15,40 @@
 #' @returns A `ggproto` object of class `GeomHat`.
 #'
 #' @export
+#'
+#' @examples
+#'
+#' library(tidyverse)
+#'
+#' my_data <- tibble( # Create summarized data by treatment group, before and after
+#'   treatment = c("A", "B", "C", "D"),
+#'   pre_treatment_mean = c(50, 49, 48, 50),
+#'   post_treatment_mean = c(51, 53, 55, 52)
+#' ) |>
+#'   pivot_longer(!treatment, names_to = "condition", values_to = "mean") |> # Format as long data
+#'   mutate(condition = fct_relevel(condition, "pre_treatment_mean",
+#'                                 "post_treatment_mean")) # Order properly
+#'
+#' ggplot(my_data, aes(x = treatment, y = mean, group = condition)) +
+#'   geom_hat(width = 0.75, linewidth = 0.75, # Add hat geoms
+#'            fill = "black", color = "black", alpha = 0.25) +
+#'   geom_text(aes(label = mean), family = "Courier", # And direct labels
+#'             position = position_dodgedifftext(width = 0.75, nudge = 0.6)) +
+#'   scale_y_continuous(expand = c(0, 0)) +
+#'   coord_cartesian(ylim = c(40, 60)) +
+#'   theme_minimal() +
+#'   theme(
+#'     text = element_text(family = "Courier"),
+#'     legend.position = "none",
+#'     panel.grid = element_blank(),
+#'     axis.line = element_line(linewidth = 0.5),
+#'     axis.ticks = element_line(linewidth = 0.5),
+#'     plot.title = element_text(hjust = 0.5)
+#'   ) +
+#'   xlab("Treatment") +
+#'   ylab("Measurement") +
+#'   ggtitle("Measurements PRE- and POST-treatment") # An example of just one use for hat graphs
+#'
 geom_hat <- function(mapping = NULL, data = NULL,
                      stat = "identity",
                      backwards = FALSE,
