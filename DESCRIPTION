@@ -1,9 +1,9 @@
 Package: gghat
-Title: Adding hat graphs to ggplot's repertoire
+Title: Adding hat graphs to the repertoire of 'ggplot2'
 Version: 0.0.0.9000
 Authors@R: 
     person("Elias", "Hyde", , "eliasworrallhyde@gmail.com", role = c("aut", "cre"))
-Description: What the package does (one paragraph).
+Description: The hat geom and compatible position functions for creating hat graphs in 'ggplot2'.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
@@ -11,6 +11,8 @@ RoxygenNote: 7.3.2
 Imports: 
     ggplot2
 URL: https://github.com/eliashyde/gghat
+Depends:
+    R (>= 4.1.0)
 BugReports: https://github.com/eliashyde/gghat/issues
 Suggests: 
     dplyr,

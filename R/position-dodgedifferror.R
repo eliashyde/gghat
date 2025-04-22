@@ -1,8 +1,10 @@
 
 #' Dodged Difference for an Error Bar
 #'
-#' @param width Relative width of bars and the like.
+#' @param width Relative width of error bars.
 #' @param backwards Whether or not to create backwards hats when the difference is negative.
+#'
+#' @returns A `ggproto` object of class `PositionDodgeDiffError`.
 #'
 #' @export
 position_dodgedifferror <- function(width = NULL, backwards = FALSE) {

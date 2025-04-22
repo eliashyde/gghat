@@ -1,8 +1,10 @@
 
 #' The Dodged Difference Position
 #'
-#' @param width Relative width of bars and the like.
+#' @param width Relative width of brim and crown.
 #' @param backwards Whether or not to create backwards hats when the difference is negative.
+#'
+#' @returns A `ggproto` object of class `PositionDodgeDiff`.
 #'
 #' @export
 position_dodgediff <- function(width = NULL, backwards = FALSE) {

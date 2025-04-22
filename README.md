@@ -6,14 +6,14 @@
 <!-- badges: start -->
 <!-- badges: end -->
 
-The goal of gghat is to add functionality to ggplot, such that hat
-graphs are included in its repertoire. To this end, gghat contains the
-hat geom as well as compatible position functions to be used with the
-text and errorbar geoms.You can install the development version of gghat
-from [GitHub](https://github.com/eliashyde/gghat). Obviously, gghat also
-requires that ggplot is installed. In fact, I would recommend that the
-user installs the entire tidyverse, as it contains a host of useful
-packages.
+The goal of `gghat` is to add functionality to `ggplot`, such that hat
+graphs are included in its repertoire. To this end, `gghat` contains
+`geom_hat()` as well as compatible position functions to be used with
+`geom_text()` and `geom_errorbar`. You can install the development
+version of `gghat` from [GitHub](https://github.com/eliashyde/gghat).
+Obviously, `gghat` also requires that `ggplot` is installed. In fact, I
+would recommend that the user installs the entire `tidyverse` too, as it
+contains a host of useful packages.
 
 ``` r
 # install.packages("devtools")
@@ -29,9 +29,9 @@ library(estimatr)
 library(tidyverse)
 ```
 
-Comparative bar graphs—in which bars are paired or otherwise grouped—are
-useful because they give a strong visual impression. As always, though,
-we must be conscientious of how we are curating this impression.
+Comparative bar graphs — in which bars are paired or otherwise grouped —
+are useful because they give a strong visual impression. As always,
+though, we must be conscientious of how we are curating this impression.
 Starting the y-axis at zero has long since been the golden rule with
 these types of plots, lest the relative lengths of truncated bars
 mislead the viewer with a lie factor greater than one (Tufte, 2001).
@@ -45,15 +45,15 @@ effect size (Witt, 2019a).
 How, then, might we mitigate the negative effects of an abbreviated
 y-axis? We could plot only the differences between groups, allowing us
 to start our y-axis at zero while also limiting it to a reasonable
-range. In doing so, though, we would lose contextualizing
-information—namely, the raw values. Or instead of bars, we could plot
-points, which visually retain only relative position and thus do not
-suffer from non-zero baselines. But Witt argues that points do not cater
-to the principles of grouping, failing to “facilitate the perceptual
-grouping of pairs” (Witt, 2019b). Of course, we could connect the
-grouped points with lines, but this isn’t ideal either because lines
-imply continuous variables; they are less suited for discrete data
-(Zacks & Tversky, 1999).
+range. In doing so, though, we would lose contextualizing information —
+namely, the raw values. Or instead of bars, we could plot points, which
+visually retain only relative position and thus do not suffer from
+non-zero baselines. But Witt argues that points do not cater to the
+principles of grouping, failing to “facilitate the perceptual grouping
+of pairs” (Witt, 2019b). Of course, we could connect the grouped points
+with lines, but this isn’t ideal either because lines imply continuous
+variables; they are less suited for discrete data (Zacks & Tversky,
+1999).
 
 Witt explains that comparative bar graphs need not fall by the wayside,
 at least not entirely; they need only be redesigned. Rather than
@@ -72,36 +72,38 @@ would recommend, this gets rid of redundancy. Moreover, as a graphic for
 difference, the profile has a lie factor of one, while the brim and
 crown are retained as annotations so as not to lose sight of the actual
 data values Hat graphs are efficient, requiring very little work on
-behalf of the viewer—although they are still novel, so it is to be
+behalf of the viewer — although they are still novel, so it is to be
 expected that they occasion brief pause.
 
 <img src="man/figures/README-introduction-1.png" width="100%" />
 
-It is difficult to create hat graphs with ggplot. In essence, the user
-must “hack” a stacked and dodged bar graph—and to be clear, a stacked
+It is difficult to create hat graphs with `ggplot`. In essence, the user
+must “hack” a stacked and dodged bar graph — and to be clear, a stacked
 and dodged bar graph is itself no easy feat within current constraints.
-But this modest package, gghat, adds the necessary functionality to
+But this modest package, `gghat`, adds the necessary functionality to
 allow the user to quickly and easily make hat graphs. In other words, it
 adds hat graphs to ggplot’s repertoire. First and foremost, gghat
-introduces the hat geom, which takes the same parameters as a
-pre-summarized comparative bar graph: a discrete x variable, a
-quantitative y variable compatible with “stat = identity,” and a
-grouping variable. Do note that hat graphs generally posit a
+introduces `geom_hat()`, which takes the same parameters as a
+pre-summarized comparative bar graph: a discrete `x` variable, a
+quantitative `y` variable compatible with `stat = identity`, and a
+`group` variable. Do note that hat graphs generally posit a
 pre-treatment or control group on the left, so with respect to the
 grouping variable users must take care to order factor levels
-appropriately. Then the typical aesthetic parameters apply: fill, color,
-alpha, width, linewidth, and so on. Linewidth, 0.75 by default, is of
-particular importance because it controls the weight of the hat’s brim.
+appropriately. Then the typical aesthetic parameters apply: `fill`,
+`color`, `alpha`, `width`, `linewidth`, and so on. The `linewidth`, 0.75
+by default, is of particular importance because it controls the weight
+of the hat’s brim.
 
-The hat geom is based on a position function entitled dodgediff, which
-is written within the gghat package. That is to say, much of the work
-that distinguishes the hat geom from, say, the bar and col geoms is
-actually outsourced to this position function. The benefit of this sort
-of organization is that variations of the same position function can be
-applied to other geoms to make them compatible with hat graphs. In
-particular, the dodgedifftext and dodgedifferror positions can be used
-with the text and errorbar geoms respectively. As well as width, which
-can be passed to both functions, a nudge argument can be passed to the
+`geom_hat()` is based on a position function, `dodgediff()`, which is
+written within the `gghat` package. That is to say, much of the work
+that distinguishes `geom_hat()` from, say, the `geom_bar()` or
+`geom_col()` is actually outsourced to this position function. The
+benefit of this sort of organization is that variations of the same
+position function can be applied to other geoms to make them compatible
+with hat graphs. In particular, the `dodgedifftext()` and
+`dodgedifferror()` position functions can be used with the `geom_text()`
+and `geom_errorbar()` respectively. As well as `width`, which can be
+passed to both functions, a `nudge` argument can be passed to the
 former, moving text vertically away from the hats.
 
 ``` r
@@ -137,23 +139,23 @@ ggplot(my_data, aes(x = treatment, y = mean, group = condition)) +
 
 <img src="man/figures/README-hatplot-1.png" width="100%" />
 
-The backwards parameter, which takes a boolean argument, is unique to
-gghat. It determines the hat geom’s behavior given a negative treatment
-effect. By default, backwards is equal to FALSE, such that the leftmost
-group is the brim of the hat, representing the baseline. Thus, a
-negative treatment effect would yield an upside-down hat. This is
-recommended, as it’s easier to intuit the underlying experimental
-process. But if the user prefers, they can instead set backwards equal
+The `backwards` parameter, which takes a boolean argument, is unique to
+`gghat`. It determines the behavior of `geom_hat()` given a negative
+treatment effect. By default, `backwards` is equal to FALSE, such that
+the leftmost group is the brim of the hat, representing the baseline.
+Thus, a negative treatment effect would yield an upside-down hat. This
+is recommended, as it’s easier to intuit the underlying experimental
+process. But if the user prefers, they can instead set `backwards` equal
 to TRUE, which makes the group with the minimum value the brim, such
 that a negative treatment effect would be reflected by a backwards hat.
-In this case, if the user is applying the dodgedifftext or
-dodgedifferror positions to the respective geoms, they must also
-explicitly set backwards equal to TRUE within these functions to ensure
-proper behavior. For instance, text will sit below negative treatment
-effects when backwards is FALSE but above all groups when backwards is
-TRUE. Note that the nudge parameter for dodgedifftext is particular in
-its ability to handle either case, as it pushes text above the hats
-upwards and text below the hats downwards.
+In this case, if the user is applying the `dodgedifftext()` or
+`dodgedifferror()` position functions to the respective geoms, they must
+also explicitly set `backwards` equal to TRUE within these functions to
+ensure proper behavior. For instance, text will sit below negative
+treatment effects when `backwards` is FALSE but above all groups when
+`backwards` is TRUE. Note that the `nudge` parameter for
+`dodgedifftext()` is particular in its ability to handle either case, as
+it pushes text above the hats upwards and text below the hats downwards.
 
 ``` r
 my_data <- tibble( # New data wherein treatment B has a NEGATIVE effect
@@ -213,11 +215,11 @@ forwards + backwards
 
 <img src="man/figures/README-backwards-1.png" width="100%" />
 
-Although hat graphs are designed with paired groups in mind, the hat
-geom can tolerate more than two groups without any issue. Backwards can
-still be FALSE or TRUE per the user’s preference, and the supplementary
-position functions, dodgedifftext and dodgedifferror, will behave
-properly.
+Although hat graphs are designed with paired groups in mind,
+`geom_hat()` can tolerate more than two groups without any issue.
+`backwards` can still be FALSE or TRUE per the user’s preference, and
+the supplementary position functions, `dodgedifftext()` and
+`dodgedifferror()`, will behave properly.
 
 ``` r
 my_data <- tibble(
@@ -253,20 +255,20 @@ ggplot(my_data, aes(x = treatment, y = mean, group = condition)) +
 
 <img src="man/figures/README-multihats-1.png" width="100%" />
 
-The gghat package works well with the estimatr package, which makes it
-easy to get group means and to calculate confidence intervals. Of
+The `gghat` package works well with the `estimatr` package, which makes
+it easy to get group means and to calculate confidence intervals. Of
 course, the user will have to decide whether they want to derive these
 confidence intervals from the standard errors of the means or the
-average treatment effects—that is, the differences between the means.
+average treatment effects — that is, the differences between the means.
 With hat graphs, the latter is likely preferable. In either case, the
-user can plot confidence intervals with the errorbar geom, but
+user can plot confidence intervals with `geom_errorbar()`, but
 importantly, if the confidence intervals are meant to contain the
 average treatment effects, the error bars should not be applied to the
-brim of the hat. This is the point of the aforementioned dodgedifferror
-position function, which will only put error bars on non-baseline
-groups. Like dodgedifftext, dodgedifferror works even when backwards is
-set to TRUE, but the default setting of FALSE is recommended. This
-process is demonstrated below.
+brim of the hat. This is the point of the aforementioned
+`dodgedifferror()` position function, which will only put error bars on
+non-baseline groups. Like `dodgedifftext()`, `dodgedifferror()` works
+even when `backwards` is set to TRUE, but the default setting of FALSE
+is recommended. This process is demonstrated below.
 
 ``` r
 dat <- tibble( # Generate un-summarized data

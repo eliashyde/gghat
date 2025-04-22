@@ -9,17 +9,10 @@
 #' there is a decrease from a baseline for instance. This bool is the backwards
 #' parameter described below.
 #'
+#' @inheritParams ggplot2::geom_bar
 #' @param backwards Whether or not to create backwards hats when the difference is negative.
-#' @param mapping As inherited.
-#' @param data As inherited.
-#' @param stat As inherited.
-#' @param position As inherited.
-#' @param ... As inherited.
-#' @param just As inherited.
-#' @param width As inherited.
-#' @param na.rm As inherited.
-#' @param show.legend As inherited.
-#' @param inherit.aes As inherited.
+#'
+#' @returns A `ggproto` object of class `GeomHat`.
 #'
 #' @export
 geom_hat <- function(mapping = NULL, data = NULL,

@@ -1,9 +1,11 @@
 
 #' Dodged Difference for Text
 #'
-#' @param width Relative width of bars and the like.
-#' @param nudge Nudge direct labels up and down away from hat.
+#' @param width Relative width of text.
+#' @param nudge Distance to move direct labels up and down away from hat.
 #' @param backwards Whether or not to create backwards hats when the difference is negative.
+#'
+#' @returns A `ggproto` object of class `PositionDodgeDiffText`.
 #'
 #' @export
 position_dodgedifftext <- function(width = NULL, nudge = 1, backwards = FALSE) {
