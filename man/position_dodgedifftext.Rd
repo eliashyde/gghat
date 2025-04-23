@@ -7,11 +7,14 @@
 position_dodgedifftext(width = NULL, nudge = 1, backwards = FALSE)
 }
 \arguments{
-\item{width}{Relative width of bars and the like.}
+\item{width}{Relative width of text.}
 
-\item{nudge}{Nudge direct labels up and down away from hat.}
+\item{nudge}{Distance to move direct labels up and down away from hat.}
 
 \item{backwards}{Whether or not to create backwards hats when the difference is negative.}
+}
+\value{
+A \code{ggproto} object of class \code{PositionDodgeDiffText}.
 }
 \description{
 Dodged Difference for Text

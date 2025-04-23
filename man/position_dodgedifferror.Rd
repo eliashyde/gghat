@@ -7,9 +7,12 @@
 position_dodgedifferror(width = NULL, backwards = FALSE)
 }
 \arguments{
-\item{width}{Relative width of bars and the like.}
+\item{width}{Relative width of error bars.}
 
 \item{backwards}{Whether or not to create backwards hats when the difference is negative.}
+}
+\value{
+A \code{ggproto} object of class \code{PositionDodgeDiffError}.
 }
 \description{
 Dodged Difference for an Error Bar

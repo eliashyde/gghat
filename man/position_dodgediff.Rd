@@ -7,9 +7,12 @@
 position_dodgediff(width = NULL, backwards = FALSE)
 }
 \arguments{
-\item{width}{Relative width of bars and the like.}
+\item{width}{Relative width of brim and crown.}
 
 \item{backwards}{Whether or not to create backwards hats when the difference is negative.}
+}
+\value{
+A \code{ggproto} object of class \code{PositionDodgeDiff}.
 }
 \description{
 The Dodged Difference Position
