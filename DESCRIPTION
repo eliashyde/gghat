@@ -22,5 +22,6 @@ Suggests:
     randomizr,
     rmarkdown,
     tidyr,
-    tidyverse
+    tidyverse,
+    vayr
 VignetteBuilder: knitr

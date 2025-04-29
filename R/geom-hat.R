@@ -10,6 +10,8 @@
 #' parameter described below.
 #'
 #' @inheritParams ggplot2::geom_bar
+#' @param stat Always set to the "identity" statistic.
+#' @param position Always set to the "dodgediff" position.
 #' @param backwards Whether or not to create backwards hats when the difference is negative.
 #'
 #' @returns A `ggproto` object of class `GeomHat`.
@@ -55,7 +57,7 @@ geom_hat <- function(mapping = NULL, data = NULL,
                      position = position_dodgediff(backwards = backwards),
                      ...,
                      just = 0.5,
-                     width = NULL,
+                     width = 0.75,
                      na.rm = FALSE,
                      show.legend = NA,
                      inherit.aes = TRUE) {

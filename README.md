@@ -27,6 +27,7 @@ library(patchwork)
 library(randomizr)
 library(estimatr)
 library(tidyverse)
+library(vayr)
 ```
 
 Comparative bar graphs — in which bars are paired or otherwise grouped —
@@ -100,11 +101,9 @@ that distinguishes `geom_hat()` from, say, the `geom_bar()` or
 `geom_col()` is actually outsourced to this position function. The
 benefit of this sort of organization is that variations of the same
 position function can be applied to other geoms to make them compatible
-with hat graphs. In particular, the `dodgedifftext()` and
-`dodgedifferror()` position functions can be used with the `geom_text()`
-and `geom_errorbar()` respectively. As well as `width`, which can be
-passed to both functions, a `nudge` argument can be passed to the
-former, moving text vertically away from the hats.
+with hat graphs. In particular the `dodgedifftext()` position function
+can be used with `geom_text()`. A `nudge` argument can be passed to
+`dodgedifftext()`, moving text vertically away from the hats.
 
 ``` r
 my_data <- tibble( # Create summarized data by treatment group, before and after
@@ -148,14 +147,14 @@ is recommended, as it’s easier to intuit the underlying experimental
 process. But if the user prefers, they can instead set `backwards` equal
 to TRUE, which makes the group with the minimum value the brim, such
 that a negative treatment effect would be reflected by a backwards hat.
-In this case, if the user is applying the `dodgedifftext()` or
-`dodgedifferror()` position functions to the respective geoms, they must
-also explicitly set `backwards` equal to TRUE within these functions to
-ensure proper behavior. For instance, text will sit below negative
-treatment effects when `backwards` is FALSE but above all groups when
-`backwards` is TRUE. Note that the `nudge` parameter for
-`dodgedifftext()` is particular in its ability to handle either case, as
-it pushes text above the hats upwards and text below the hats downwards.
+In this case, if the user is applying the `dodgedifftext()` position
+function to `geom_text()`, they must also explicitly set `backwards`
+equal to TRUE within these functions to ensure proper behavior. For
+instance, text will sit below negative treatment effects when
+`backwards` is FALSE but above all groups when `backwards` is TRUE. Note
+that the `nudge` parameter for `dodgedifftext()` is particular in its
+ability to handle either case, as it pushes text above the hats upwards
+and text below the hats downwards.
 
 ``` r
 my_data <- tibble( # New data wherein treatment B has a NEGATIVE effect
@@ -218,8 +217,8 @@ forwards + backwards
 Although hat graphs are designed with paired groups in mind,
 `geom_hat()` can tolerate more than two groups without any issue.
 `backwards` can still be FALSE or TRUE per the user’s preference, and
-the supplementary position functions, `dodgedifftext()` and
-`dodgedifferror()`, will behave properly.
+the supplementary position function `dodgedifftext()` will behave
+properly.
 
 ``` r
 my_data <- tibble(
@@ -254,65 +253,6 @@ ggplot(my_data, aes(x = treatment, y = mean, group = condition)) +
 ```
 
 <img src="man/figures/README-multihats-1.png" width="100%" />
-
-The `gghat` package works well with the `estimatr` package, which makes
-it easy to get group means and to calculate confidence intervals. Of
-course, the user will have to decide whether they want to derive these
-confidence intervals from the standard errors of the means or the
-average treatment effects — that is, the differences between the means.
-With hat graphs, the latter is likely preferable. In either case, the
-user can plot confidence intervals with `geom_errorbar()`, but
-importantly, if the confidence intervals are meant to contain the
-average treatment effects, the error bars should not be applied to the
-brim of the hat. This is the point of the aforementioned
-`dodgedifferror()` position function, which will only put error bars on
-non-baseline groups. Like `dodgedifftext()`, `dodgedifferror()` works
-even when `backwards` is set to TRUE, but the default setting of FALSE
-is recommended. This process is demonstrated below.
-
-``` r
-dat <- tibble( # Generate un-summarized data
-  block = rep(c("A", "B", "C", "D"), each = 100),
-  Z = block_ra(blocks = block),
-  Y = rnorm(n = 400, mean = 50 + (block == "B")*25 + (block == "C")*5 + 
-              (block == "D")*15 + Z*15 - Z*(block == "B")*30, sd = 10)
-) 
-
-group_means <- dat |> # Then summarize the data
-  group_by(block, Z) |> 
-  reframe(tidy(lm_robust(Y ~ 1))) 
-
-cates <- dat |> # Get stats on the average treatment effect
-  group_by(block) |> 
-  reframe(tidy(lm_robust(Y ~ Z))) |> # Isolate just the standard error...
-  select(block, term, std.error) |> 
-  filter(term == "Z") # ...of the average treatment effect...
-
-group_means <- group_means |> 
-  left_join(cates, by = "block", suffix = c(".mean", ".ate")) # ...and add it to summaries
-  
-ggplot(group_means, aes(x = block, y = estimate, group = Z)) +
-  geom_hat(width = 0.75, fill = "black", color = "black", alpha = 0.25) +
-  geom_errorbar(aes(ymin = estimate - (1.96*std.error.ate), # For a 95% confidence interval
-                    ymax = estimate + (1.96*std.error.ate)), width = 0.1, # Compare width here...
-                position = position_dodgedifferror(width = 0.75)) + # ...to width here
-  scale_y_continuous(expand = c(0, 0)) +
-  coord_cartesian(ylim = c(35, 100)) +
-  theme_minimal() +
-  theme(
-    text = element_text(family = "Courier"),
-    legend.position = "none",
-    panel.grid = element_blank(),
-    axis.line = element_line(linewidth = 0.5),
-    axis.ticks = element_line(linewidth = 0.5),
-    plot.title = element_text(hjust = 0.5)
-  ) +
-  xlab("Treatment") +
-  ylab("Measurement") +
-  ggtitle("Measurements WITHOUT versus WITH treatment")
-```
-
-<img src="man/figures/README-confidenceintervals-1.png" width="100%" />
 
 ## References
 

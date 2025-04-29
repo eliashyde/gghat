@@ -2,5 +2,4 @@
 
 export(geom_hat)
 export(position_dodgediff)
-export(position_dodgedifferror)
 export(position_dodgedifftext)

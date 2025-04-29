@@ -8,7 +8,7 @@
 #' @returns A `ggproto` object of class `PositionDodgeDiffText`.
 #'
 #' @export
-position_dodgedifftext <- function(width = NULL, nudge = 1, backwards = FALSE) {
+position_dodgedifftext <- function(width = 0.75, nudge = NULL, backwards = FALSE) {
   ggplot2::ggproto(NULL, PositionDodgeDiffText, width = width, nudge = nudge, backwards = backwards)
 }
 

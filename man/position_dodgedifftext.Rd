@@ -4,7 +4,7 @@
 \alias{position_dodgedifftext}
 \title{Dodged Difference for Text}
 \usage{
-position_dodgedifftext(width = NULL, nudge = 1, backwards = FALSE)
+position_dodgedifftext(width = 0.75, nudge = NULL, backwards = FALSE)
 }
 \arguments{
 \item{width}{Relative width of text.}

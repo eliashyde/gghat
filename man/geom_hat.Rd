@@ -12,7 +12,7 @@ geom_hat(
   position = position_dodgediff(backwards = backwards),
   ...,
   just = 0.5,
-  width = NULL,
+  width = 0.75,
   na.rm = FALSE,
   show.legend = NA,
   inherit.aes = TRUE
@@ -39,20 +39,11 @@ the plot data. The return value must be a \code{data.frame}, and
 will be used as the layer data. A \code{function} can be created
 from a \code{formula} (e.g. \code{~ head(.x, 10)}).}
 
+\item{stat}{Always set to the "identity" statistic.}
+
 \item{backwards}{Whether or not to create backwards hats when the difference is negative.}
 
-\item{position}{A position adjustment to use on the data for this layer. This
-can be used in various ways, including to prevent overplotting and
-improving the display. The \code{position} argument accepts the following:
-\itemize{
-\item The result of calling a position function, such as \code{position_jitter()}.
-This method allows for passing extra arguments to the position.
-\item A string naming the position adjustment. To give the position as a
-string, strip the function name of the \code{position_} prefix. For example,
-to use \code{position_jitter()}, give the position as \code{"jitter"}.
-\item For more information and other ways to specify the position, see the
-\link[ggplot2:layer_positions]{layer position} documentation.
-}}
+\item{position}{Always set to the "dodgediff" position.}
 
 \item{...}{Other arguments passed on to \code{\link[ggplot2:layer]{layer()}}'s \code{params} argument. These
 arguments broadly fall into one of 4 categories below. Notably, further

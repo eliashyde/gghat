@@ -27,6 +27,7 @@ library(patchwork)
 library(randomizr)
 library(estimatr)
 library(tidyverse)
+library(vayr)
 ```
 
 Comparative bar graphs — in which bars are paired or otherwise grouped — are useful because they give a strong visual impression. As always, though, we must be conscientious of how we are curating this impression. Starting the y-axis at zero has long since been the golden rule with these types of plots, lest the relative lengths of truncated bars mislead the viewer with a lie factor greater than one (Tufte, 2001). That said, a y-axis that begins at zero may minimize statistically significant treatment effects in comparative bar graphs, rendering them visually insignificant. In a recent paper, Jessica Witt suggests that we derive our y-ranges from standard deviation when possible to increase sensitivity, reducing the discrepancy between actual and perceived effect size (Witt, 2019a).
@@ -113,7 +114,7 @@ plot4 <- ggplot(my_data, aes(x = treatment, y = mean, group = condition)) +
 
 It is difficult to create hat graphs with `ggplot`. In essence, the user must “hack” a stacked and dodged bar graph — and to be clear, a stacked and dodged bar graph is itself no easy feat within current constraints. But this modest package, `gghat`, adds the necessary functionality to allow the user to quickly and easily make hat graphs. In other words, it adds hat graphs to ggplot’s repertoire. First and foremost, gghat introduces `geom_hat()`, which takes the same parameters as a pre-summarized comparative bar graph: a discrete `x` variable, a quantitative `y` variable compatible with `stat = identity`, and a `group` variable. Do note that hat graphs generally posit a pre-treatment or control group on the left, so with respect to the grouping variable users must take care to order factor levels appropriately. Then the typical aesthetic parameters apply: `fill`, `color`, `alpha`, `width`, `linewidth`, and so on. The `linewidth`, 0.75 by default, is of particular importance because it controls the weight of the hat’s brim.
 
-`geom_hat()` is based on a position function, `dodgediff()`, which is written within the `gghat` package. That is to say, much of the work that distinguishes `geom_hat()` from, say, the `geom_bar()` or `geom_col()` is actually outsourced to this position function. The benefit of this sort of organization is that variations of the same position function can be applied to other geoms to make them compatible with hat graphs. In particular, the `dodgedifftext()` and `dodgedifferror()` position functions can be used with the `geom_text()` and `geom_errorbar()` respectively. As well as `width`, which can be passed to both functions, a `nudge` argument can be passed to the former, moving text vertically away from the hats.
+`geom_hat()` is based on a position function, `dodgediff()`, which is written within the `gghat` package. That is to say, much of the work that distinguishes `geom_hat()` from, say, the `geom_bar()` or `geom_col()` is actually outsourced to this position function. The benefit of this sort of organization is that variations of the same position function can be applied to other geoms to make them compatible with hat graphs. In particular the `dodgedifftext()` position function can be used with `geom_text()`. A `nudge` argument can be passed to `dodgedifftext()`, moving text vertically away from the hats.
 
 ```{r hatplot, dpi = 96, fig.width = 10, fig.height = 6}
 my_data <- tibble( # Create summarized data by treatment group, before and after
@@ -146,7 +147,7 @@ ggplot(my_data, aes(x = treatment, y = mean, group = condition)) +
   ggtitle("Measurements PRE- and POST-treatment") # An example of just one use for hat graphs
 ```
 
-The `backwards` parameter, which takes a boolean argument, is unique to `gghat`. It determines the behavior of `geom_hat()` given a negative treatment effect. By default, `backwards` is equal to FALSE, such that the leftmost group is the brim of the hat, representing the baseline. Thus, a negative treatment effect would yield an upside-down hat. This is recommended, as it’s easier to intuit the underlying experimental process. But if the user prefers, they can instead set `backwards` equal to TRUE, which makes the group with the minimum value the brim, such that a negative treatment effect would be reflected by a backwards hat. In this case, if the user is applying the `dodgedifftext()` or `dodgedifferror()` position functions to the respective geoms, they must also explicitly set `backwards` equal to TRUE within these functions to ensure proper behavior. For instance, text will sit below negative treatment effects when `backwards` is FALSE but above all groups when `backwards` is TRUE. Note that the `nudge` parameter for `dodgedifftext()` is particular in its ability to handle either case, as it pushes text above the hats upwards and text below the hats downwards. 
+The `backwards` parameter, which takes a boolean argument, is unique to `gghat`. It determines the behavior of `geom_hat()` given a negative treatment effect. By default, `backwards` is equal to FALSE, such that the leftmost group is the brim of the hat, representing the baseline. Thus, a negative treatment effect would yield an upside-down hat. This is recommended, as it’s easier to intuit the underlying experimental process. But if the user prefers, they can instead set `backwards` equal to TRUE, which makes the group with the minimum value the brim, such that a negative treatment effect would be reflected by a backwards hat. In this case, if the user is applying the `dodgedifftext()` position function to `geom_text()`, they must also explicitly set `backwards` equal to TRUE within these functions to ensure proper behavior. For instance, text will sit below negative treatment effects when `backwards` is FALSE but above all groups when `backwards` is TRUE. Note that the `nudge` parameter for `dodgedifftext()` is particular in its ability to handle either case, as it pushes text above the hats upwards and text below the hats downwards. 
 
 ```{r backwards, dpi = 96, fig.width = 10, fig.height = 4}
 my_data <- tibble( # New data wherein treatment B has a NEGATIVE effect
@@ -204,7 +205,7 @@ backwards <- ggplot(my_data, aes(x = treatment, y = mean, group = condition)) +
 forwards + backwards
 ```
 
-Although hat graphs are designed with paired groups in mind, `geom_hat()` can tolerate more than two groups without any issue. `backwards` can still be FALSE or TRUE per the user’s preference, and the supplementary position functions, `dodgedifftext()` and `dodgedifferror()`, will behave properly.
+Although hat graphs are designed with paired groups in mind, `geom_hat()` can tolerate more than two groups without any issue. `backwards` can still be FALSE or TRUE per the user’s preference, and the supplementary position function `dodgedifftext()` will behave properly.
 
 ```{r multihats, dpi = 96, fig.width = 10, fig.height = 6}
 my_data <- tibble(
@@ -238,48 +239,76 @@ ggplot(my_data, aes(x = treatment, y = mean, group = condition)) +
   ggtitle("Measurements after MULTIPLE rounds of treatment")
 ```
 
-The `gghat` package works well with the `estimatr` package, which makes it easy to get group means and to calculate confidence intervals. Of course, the user will have to decide whether they want to derive these confidence intervals from the standard errors of the means or the average treatment effects — that is, the differences between the means. With hat graphs, the latter is likely preferable. In either case, the user can plot confidence intervals with `geom_errorbar()`, but importantly, if the confidence intervals are meant to contain the average treatment effects, the error bars should not be applied to the brim of the hat. This is the point of the aforementioned `dodgedifferror()` position function, which will only put error bars on non-baseline groups. Like `dodgedifftext()`, `dodgedifferror()` works even when `backwards` is set to TRUE, but the default setting of FALSE is recommended. This process is demonstrated below.
+Finally, the functionality of `gghat` is demonstrated below with a more in-depth example,
+which also illustrates some of the data-level work that can go into a hat graph. Specifically,
+this example uses `patriot_act` data from the `vayr` package. The Patriot Act was an anti-terrorism law, and the `patriot_act` data contains data relating to an experiment that measured support for this law after randomly exposing participants to statements that cast the legislation in either a negative or positive light. The experiment was conducted in 2009 with a nationwide sample, 
+and it was replicated in 2015 with a sample of MTurkers. In both instances, the 
+treatments had a similar effect on Democrats and Republicans. There are four 
+variables in the data: 
 
-```{r confidenceintervals, dpi = 96, fig.width = 10, fig.height = 6}
-dat <- tibble( # Generate un-summarized data
-  block = rep(c("A", "B", "C", "D"), each = 100),
-  Z = block_ra(blocks = block),
-  Y = rnorm(n = 400, mean = 50 + (block == "B")*25 + (block == "C")*5 + 
-              (block == "D")*15 + Z*15 - Z*(block == "B")*30, sd = 10)
-) 
+  + `sample_label`, the study to which the participant belonged
+  + `pid_3`, the partisanship of the participant
+  + `T1_content`, the statements to which the participant was exposed
+  +  `PA_support`, the participant's post-treatment support for the Patriot Act 
 
-group_means <- dat |> # Then summarize the data
-  group_by(block, Z) |> 
-  reframe(tidy(lm_robust(Y ~ 1))) 
+Below, the data is summarized and the group means are calculated. It would then be possible to calculate the standard errors of these group means and create confidence intervals from them. But better yet, because hat graphs are designed to represent the difference between control and treatment groups, confidence intervals can be created for the average treatment effect. These confidence intervals, which will rest only on the crowns of the hats not the brims, are created separately and then appended to the summarized data for plotting.
 
-cates <- dat |> # Get stats on the average treatment effect
-  group_by(block) |> 
-  reframe(tidy(lm_robust(Y ~ Z))) |> # Isolate just the standard error...
-  select(block, term, std.error) |> 
-  filter(term == "Z") # ...of the average treatment effect...
+``` {r example, dpi = 96, fig.width = 10, fig.height = 6}
+patriot_act <-
+  patriot_act |>
+  mutate(T1_content = relevel(factor(T1_content), ref = "Control"))
 
-group_means <- group_means |> 
-  left_join(cates, by = "block", suffix = c(".mean", ".ate")) # ...and add it to summaries
-  
-ggplot(group_means, aes(x = block, y = estimate, group = Z)) +
-  geom_hat(width = 0.75, fill = "black", color = "black", alpha = 0.25) +
-  geom_errorbar(aes(ymin = estimate - (1.96*std.error.ate), # For a 95% confidence interval
-                    ymax = estimate + (1.96*std.error.ate)), width = 0.1, # Compare width here...
-                position = position_dodgedifferror(width = 0.75)) + # ...to width here
-  scale_y_continuous(expand = c(0, 0)) +
-  coord_cartesian(ylim = c(35, 100)) +
+summary_df <-
+  patriot_act |>
+  group_by(T1_content, pid_3, sample_label) |>
+  reframe(tidy(lm_robust(PA_support ~ 1)))
+
+estimates_df <-
+  patriot_act |>
+  group_by(pid_3, sample_label) |>
+  reframe(tidy(lm_robust(PA_support ~ T1_content))) |>
+  filter(term!= "(Intercept)")
+
+control_means <-
+  summary_df |>
+  filter(T1_content == "Control") |>
+  transmute(pid_3, sample_label,
+            control_mean = estimate)
+
+estimates_df <-
+  estimates_df |>
+  left_join(control_means, by = join_by(pid_3, sample_label))
+
+estimates_df  <-
+  estimates_df |>
+  transmute(
+    pid_3,
+    sample_label,
+    T1_content = factor(str_remove(term, "T1_content"), levels = levels(patriot_act$T1_content)),
+    conf.low_effect = conf.low + control_mean,
+    conf.high_effect = conf.high + control_mean)
+
+gg_df <-
+  summary_df |> left_join(estimates_df, by = join_by(T1_content, pid_3, sample_label))
+
+ggplot(gg_df, aes(x = pid_3, y = estimate, group = T1_content)) +
+  geom_hat(fill = NA) +
+  geom_linerange(aes(ymin = conf.low_effect, ymax = conf.high_effect, color = pid_3),
+                 position = position_dodge(width = 0.75),
+                 linewidth = 0.25, alpha = 0.75) +
+  geom_text(aes(label = T1_content),
+            position = position_dodgedifftext(nudge = 0.1),
+            family = "Courier", fontface = "bold") +
+  scale_color_manual(values = c("blue3", "red3")) +
+  facet_wrap(~sample_label) +
   theme_minimal() +
-  theme(
-    text = element_text(family = "Courier"),
-    legend.position = "none",
-    panel.grid = element_blank(),
-    axis.line = element_line(linewidth = 0.5),
-    axis.ticks = element_line(linewidth = 0.5),
-    plot.title = element_text(hjust = 0.5)
-  ) +
-  xlab("Treatment") +
-  ylab("Measurement") +
-  ggtitle("Measurements WITHOUT versus WITH treatment")
+  theme(legend.position = "none",
+        text = element_text(family = "Courier"),
+        panel.grid = element_blank(),
+        axis.line = element_line(linewidth = 0.5),
+        axis.ticks = element_line(linewidth = 0.5),
+        axis.title.x = element_blank()) +
+  labs(y = "Do you oppose or support the Patriot Act?\n[1: Strongly oppose to 7: Strongly support]")
 ```
 
 ## References
