@@ -19,8 +19,8 @@ knitr::opts_chunk$set(
 <!-- badges: end -->
 
 The goal of `gghat` is to add functionality to `ggplot`, such that hat graphs are included
-in its repertoire. To this end, `gghat` contains `geom_hat()` as well as compatible position 
-functions to be used with `geom_text()` and `geom_errorbar`. You can install the development version of `gghat` from [GitHub](https://github.com/eliashyde/gghat). Obviously, `gghat` also requires that `ggplot` is installed. 
+in its repertoire. To this end, `gghat` contains `geom_hat()` as well as a compatible position 
+function to be used with `geom_text()`. You can install the development version of `gghat` from [GitHub](https://github.com/eliashyde/gghat). Obviously, `gghat` also requires that `ggplot` is installed. 
 In fact, I would recommend that the user installs the entire `tidyverse` too, as it contains a host of useful packages.
 
 ``` r

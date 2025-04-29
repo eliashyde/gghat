@@ -1,4 +1,5 @@
 
+
 #' The Dodged Difference Position
 #'
 #' @param width Relative width of brim and crown.
